@@ -1,0 +1,6 @@
+<form action="/problem/" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ form.errors }}
+    <button type="submit" class="btn">Submit</button>
+</form>
