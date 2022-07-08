@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import problem,solution
-from .our_forms import code_form
+from .our_forms import code_form, problem_form, testcase_form
+from .code_validation import check_code
 
 def display_problems(request):
     context={
@@ -18,6 +20,7 @@ def problem_detail(request, prob_id):
             sub=form.save()
             sub.curr_problem=obj
             sub.save()
+            check_code(sub)
         return redirect('past_submissions',prob_id)
     else:
         form=code_form()
@@ -30,6 +33,46 @@ def problem_detail(request, prob_id):
         # print(form.errors.as_data)
         template='detail_problem.html'
         return  render (request, template, context)
+
+@staff_member_required
+def add_problem(request):
+    if(request.method=='POST'):
+        form=problem_form(request.POST)
+        if(form.is_valid()):
+            sub=form.save()
+        return redirect ('add_testcase',sub.id)
+    else:
+        form=problem_form()
+        context= {
+            'form': form
+        }
+        template='add_prob.html'
+        return render(request,template,context)
+
+@staff_member_required
+def add_testcase(request,prob_id):
+    if(request.method=='POST'):
+        obj=get_object_or_404(problem, id = prob_id)
+        form=testcase_form(request.POST)
+        if(form.is_valid()):
+            sub=form.save()
+            sub.curr_problem=obj
+            sub.save()
+        return redirect('problem_page')
+    else:
+        form=testcase_form()
+        context= {
+            'form': form
+        }
+        template = 'add_test.html'
+        return render(request,template,context)
+
+@staff_member_required
+def del_prob(request, prob_id):
+    obj=problem.objects.get(id=prob_id)
+    obj.delete()
+    return redirect('problem_page')
+
 
 def submit(request,prob_id):
     obj=problem.objects.get(id=prob_id)

@@ -19,7 +19,10 @@ from judge.views import (
     display_problems,
     problem_detail,
     submit,
-    show_code
+    show_code,
+    add_problem,
+    add_testcase,
+    del_prob
 )
 
 urlpatterns = [
@@ -27,5 +30,8 @@ urlpatterns = [
     path('problem/',display_problems,name='problem_page'),
     path('problem/<int:prob_id>/',problem_detail,name='detail_problem'),
     path('problem/<int:prob_id>/submission/',submit,name='past_submissions'),
-    path('problem/<int:prob_id>/submission/code/<int:submission_id>/',show_code,name='show_past_code')
+    path('problem/<int:prob_id>/submission/code/<int:submission_id>/',show_code,name='show_past_code'),
+    path('problem/add/', add_problem, name = 'add_problem'),
+    path('problem/addtest/<int:prob_id>/', add_testcase, name = 'add_testcase'),
+    path('problem/delete/<int:prob_id>/', del_prob, name = 'delete_prob')
 ]
