@@ -1,7 +1,26 @@
+{% extends 'base.html' %}
 
+{% block body_block %}
+<div style="position: relative;top: -30px">
+<div>
+    <h2> {{ data.name}} </h2>
+    <h4> {{ data.difficulty}} </h4>
+    <br/><br/>
+    {{ data.statement }}
+ </div>
+</div>
+
+<form action="/problem/{{data.id}}/" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Submit</button>
+</form>
+
+{%endblock%}
+
+<!--
 <div class="main">
-     
-    <!-- Specify fields to be displayed -->
+
     <h2>{{ data.name }}</h2>
     {{ data.statement }}<br/>
     {{ data.difficulty }}<br/>
@@ -14,3 +33,4 @@
     
  
 </div>
+-->

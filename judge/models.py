@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 class problem(models.Model):
     name=models.TextField()
     statement = models.TextField()
@@ -14,6 +15,6 @@ class solution(models.Model):
     
 
 class testcase(models.Model):
-    curr_problem=models.ForeignKey(problem, on_delete=models.CASCADE)
+    curr_problem=models.ForeignKey(problem, on_delete=models.CASCADE,null=True)
     input=models.TextField()
     output=models.TextField()
