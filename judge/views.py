@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import problem,solution
 from .our_forms import code_form, problem_form, testcase_form
-from .code_validation import check_code
+from .code_validation1 import check_code
 
 def display_problems(request):
     context={
