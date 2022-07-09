@@ -1,5 +1,8 @@
-import os, filecmp
 from .models import testcase
+import os, filecmp
+from socket import timeout
+import subprocess
+
 
 def check_code(sub):
     file=open(r'S:\study\online_judge\judge\Testcases\question1\out.cpp', 'w+')
@@ -11,7 +14,6 @@ def check_code(sub):
     input=input.split(',')
     output=output.split(',')
     n=len(input)
-    "S:\study\online_judge\judge\Testcases\question1\TESTinput1.txt"
     if(os.system('g++ S:\study\online_judge\judge\Testcases\question1\out.cpp')!=0):
         verdict='Compilation Error'
         sub.verdict=verdict

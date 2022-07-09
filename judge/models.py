@@ -9,7 +9,7 @@ class problem(models.Model):
 
 class solution(models.Model):
     curr_problem=models.ForeignKey(problem, on_delete=models.CASCADE, null=True)
-    verdict=models.TextField(default='WA')
+    verdict=models.TextField(null=True)
     time_of_submit = models.DateTimeField(auto_now=True)
     code=models.TextField(null=True, blank=True)
     
