@@ -8,7 +8,6 @@ from .our_forms import code_form, problem_form, testcase_form
 from .code_validation1 import check_code
 from .code_validation_docker1 import code_check
 
-# ignored
 
 def display_problems(request):
     context={

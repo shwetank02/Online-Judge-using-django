@@ -7,7 +7,6 @@ class problem(models.Model):
     statement = models.TextField()
     difficulty=models.TextField()
 
-#ignored
 
 class solution(models.Model):
     #submitter = models.ForeignKey(coder, on_delete=models.CASCADE,null=True)
