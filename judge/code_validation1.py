@@ -15,7 +15,7 @@ def check_code(submission):
     try:
         subprocess.run(command, capture_output = True, check = True)
     except subprocess.CalledProcessError:
-        print("CE")
+        print("Compilation Error")
         submission.verdict = "Compilation Error"
         submission.save()
         return
@@ -23,7 +23,7 @@ def check_code(submission):
         command = ['./a.out']
     else:
         command = ['a.exe']
-    # Try code execution
+
     z=testcase.objects.get(curr_problem=submission.curr_problem)
     input=z.input
     output=z.output

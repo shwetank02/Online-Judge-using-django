@@ -1,36 +1,56 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% block body_block %}
-<div style="position: relative;top: -30px">
-<div>
-    <h2> {{ data.name}} </h2>
-    <h4> {{ data.difficulty}} </h4>
-    <br/><br/>
-    {{ data.statement }}
- </div>
-</div>
+{% block content %}
 
-<form action="/problem/{{data.id}}/" method="POST">
+<div class="container-lg" style="margin: 1% 0 0 -3%; width: 120%; margin-top: 8%;">
+  <div class="sticky-md-top">
+    <h2>{{ problem.id }}. {{ problem.name }} </h2>
+    <h6>({{problem.difficulty}})</h6>
+  </div>
+  <hr>
+
+  {% autoescape off %}
+
+  <div>{{ problem.statement }}</div>
+  <br>
+
+  {% endautoescape %}
+
+  <hr>
+
+  <p style="color:blue"><a href=./submission> My Submissions </a></p>
+  <form action='' method="POST" style="margin: 0 0 4% 0; ">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Submit</button>
-</form>
-
-{%endblock%}
-
+    <fieldset>
 <!--
-<div class="main">
-
-    <h2>{{ data.name }}</h2>
-    {{ data.statement }}<br/>
-    {{ data.difficulty }}<br/>
-    <a href="./submission/"><h3>My Submissions</h3></a>
-    <form action="/problem/{{data.id}}/" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Submit</button>
-    </form>
-    
- 
-</div>
+      <div class="mb-3" style="width: 40%;">
+        <label for="language" class="form-label">
+          <h6>Judges:</h6>
+        </label>
+        <select id="language" name="language" class="form-select" style="background-color: lightgrey;">
+          {% for judge in judges %}
+            {% if prejudge == judge.1 %}
+              <option selected>{{ judge.1 }}</option>
+            {% else %}
+              <option>{{ judge.1 }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
 -->
+
+      <div class="mb-3">
+        <label for="user_solution" class="form-label">
+          <h6>Code:</h6>
+        </label>
+        <textarea class="form-control" name="code" id="user_solution" rows="10">{{ precode }}</textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </fieldset>
+  </form>
+
+</div>
+
+{% endblock content %}
