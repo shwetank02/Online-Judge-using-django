@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 
-from judge.models import solution
 
 
 def register(request):

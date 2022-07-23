@@ -1,11 +1,14 @@
-from tkinter import CASCADE
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+
+#asdf
 class problem(models.Model):
     name=models.TextField()
     statement = models.TextField()
     difficulty=models.TextField()
+    time_limit=models.FloatField(null=True)
 
 
 class solution(models.Model):

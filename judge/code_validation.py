@@ -1,50 +1,61 @@
 from .models import testcase
-import os, filecmp
-from socket import timeout
-import subprocess
+import os, filecmp, sys, subprocess
+from online_judge.settings import BASE_DIR
 
+def check_code(submission):
+    #print(BASE_DIR)
+    with open("sol.cpp", "w") as f:
+        f.write(submission.code)
+    f.close()
+    if sys.platform == 'linux':
+        command =['g++ sol.cpp']
+    else:
+        path_to_code = BASE_DIR
+        command = 'g++ ' + os.path.join(path_to_code, 'sol.cpp')
 
-def check_code(sub):
-    file=open(r'S:\study\online_judge\judge\Testcases\question1\out.cpp', 'w+')
-    file.write(sub.code)
-    file.close()
-    z=testcase.objects.get(curr_problem=sub.curr_problem)
-    input=z.input
-    output=z.output
-    input=input.split(',')
-    output=output.split(',')
-    n=len(input)
-    if(os.system('g++ S:\study\online_judge\judge\Testcases\question1\out.cpp')!=0):
-        verdict='Compilation Error'
-        sub.verdict=verdict
-        sub.save()
+    # Try code compilation
+    try:
+        subprocess.run(command, capture_output = True, check = True)
+    except subprocess.CalledProcessError:
+        print("Compilation Error")
+        submission.verdict = "Compilation Error"
+        submission.save()
         return
-    for i in range(n):
-        testinput=input[i]
-        testoutput=output[i]
-        z='a,out <' + str(testinput) + '> S:\study\online_judge\judge\Testcases\question1\output.txt'
-        os.system(z)
-        out1='S:\study\online_judge\judge\Testcases\question1\output.txt'
-        if(filecmp.cmp(out1,testoutput,shallow=False)):
-            verdict='Accepted'
-        else:
-            verdict='WA'
-            break
+    if sys.platform == 'linux':
+        command = ['./a.out']
+    else:
+        command = ['a.exe']
 
-    sub.verdict=verdict
-    sub.save()
-    return
-    # with open('out.cpp', 'wb+') as destination:
-    #     for chunk in file.chunks():
-    #         destination.write(chunk)
-    #open('out.cpp', 'w+')
-    # if os.system("g++ out.cpp -o out") == 0:
-    #     if os.system("timeout --preserve-status 1 ./out < TESTinput.txt > output.txt") != 0:
-    #         print("TLE")
-    #     else:
-    #         if os.system("diff output.txt TESToutput.txt") == 0:
-    #             print("AC")
-    #         else:
-    #             print("WA")
-    # else:
-    #     print("CE")
+    z=testcase.objects.filter(curr_problem=submission.curr_problem)
+    for test in z:
+        testinput=test.input
+        testoutput=test.output
+        try:
+            output = subprocess.run(command, capture_output = True, \
+                    text = True, input = testinput, check = True, timeout = submission.curr_problem.time_limit)
+        except subprocess.TimeoutExpired:
+            submission.verdict = "TLE"
+            submission.save()
+            return
+
+        #Calculate the verdict and save it
+        if(checker(output.stdout,testoutput)):
+            submission.verdict='Accepted'
+            submission.save()
+        else:
+            submission.verdict='WA'
+            submission.save()
+            return
+
+
+def checker(output, correct_ouput):
+    output = output.split('\n')
+    correct_ouput = correct_ouput.split('\n')
+    if len(output) != len(correct_ouput):
+        return False
+    for i in range(len(output)):
+        if list(filter(None, output[i].split(' '))) != \
+                list(filter(None, correct_ouput[i].split(' '))):
+            return False
+    return True
+

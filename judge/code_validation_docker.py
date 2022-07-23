@@ -4,7 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 #from celery.decorators import task
 
 def code_check(submission):
-    with open("S:\study\online_judge\sol.cpp", "w") as f:
+    with open("sol.cpp", "w") as f:
         f.write(submission.code)
     f.close()
     client = docker.from_env()
@@ -14,33 +14,28 @@ def code_check(submission):
     container.exec_run("chmod +x a.out")
     time.sleep(1)
     container.exec_run("touch output.txt")
-    z=testcase.objects.get(curr_problem=submission.curr_problem)
-    input=z.input
-    output=z.output
-    input=input.split(',')
-    output1=output.split(',')
-    n=len(input)
-    for i in range(n):
-        f_input = input[i]
-        f_output=output1[i]
-        with open(f_input,'r') as f1:
-            cont=f1.read()
-        f1.close()
+    z=testcase.objects.filter(curr_problem=submission.curr_problem)
+    for test in z:
+        testinput = test.input
+        testoutput=test.output
+        # with open(f_input,'r') as f1:
+        #     cont=f1.read()
+        # f1.close()
         with open("input_docker.txt", 'w') as f:
-            f.write(cont)
+            f.write(testinput)
         f.close()
         os.system("docker cp input_docker.txt {}:/input_docker.txt".format(container.short_id))
         output = container.exec_run(['sh', '-c',  './a.out < input_docker.txt > output.txt'])
         os.system("docker cp {}:/output.txt output.txt".format(container.short_id))
 
-        dout="S:\study\online_judge\output.txt"
+        #dout="S:\study\online_judge\output.txt"
         with open('output.txt', 'r') as f:
             fcont=f.read()
         f.close()
-        with open(f_output, 'r') as f1:
-            f1cont=f1.read()
-        f1.close()
-        if checker(fcont, f1cont):
+        # with open(f_output, 'r') as f1:
+        #     f1cont=f1.read()
+        # f1.close()
+        if checker(fcont, testoutput):
             submission.verdict = "Accepted"
             submission.save()
         else:
@@ -54,7 +49,6 @@ def code_check(submission):
         #     print(i)
         #     submission.verdict='WA'
         #     submission.save()
-        #     return
 
     container.kill()
     container.stop()

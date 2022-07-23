@@ -5,9 +5,10 @@ from .models import problem,solution
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from .our_forms import code_form, problem_form, testcase_form
-from .code_validation1 import check_code
-from .code_validation_docker1 import code_check
+from .code_validation import check_code
+from .code_validation_docker import code_check
 
+use_docker=False
 
 def display_problems(request):
     context={
@@ -17,7 +18,6 @@ def display_problems(request):
 
 @login_required(login_url='user_login')
 def problem_detail(request, prob_id):
-    use_docker=True
     obj=get_object_or_404(problem, id = prob_id)
     if request.method == 'POST':
         form=code_form(request.POST)
