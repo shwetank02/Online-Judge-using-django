@@ -33,9 +33,9 @@ from users.views import (
 )
 
 urlpatterns = [
-    #path('', RedirectView.as_view(url='problem/', permanent=False), name='Home'),
+    path('', RedirectView.as_view(url='problem/', permanent=False), name='Home'),
     path('admin/', admin.site.urls),
-    path('',display_problems,name='problem_page'),
+    path('problem/',display_problems,name='problem_page'),
     path('problem/<int:prob_id>/',problem_detail,name='detail_problem'),
     path('problem/<int:prob_id>/submission/',submit,name='past_submissions'),
     path('problem/<int:prob_id>/submission/code/<int:submission_id>/',show_code,name='show_past_code'),
