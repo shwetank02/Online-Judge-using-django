@@ -1,5 +1,6 @@
 import subprocess as sp
 from time import time
+import os
 
 import docker
 from docker.models.containers import Container
@@ -15,13 +16,13 @@ def code_check(submission):
     '''
     Tests `submission` against the gcc judge
     '''
-    filename = str(submission.id)
+    filename = 'submit_code'
     test=testcase.objects.get(curr_problem=submission.curr_problem)
     return __chief_judge(
         submission=submission,
         testcases=test,
-        ext='c',
-        compile='gcc -o {} {}.c'.format(filename, filename),
+        ext='cpp',
+        compile='gcc -o {} {}.cpp'.format(filename, filename),
         run='./{}'.format(filename),
         clear='rm {} {}.c'.format(filename, filename),
         cont_name=_.Judge.GCCCONT,
@@ -31,10 +32,10 @@ def code_check(submission):
 
 
 def __chief_judge(submission, testcases, ext, clear, run, cont_name, docker_image, compile=None):
-    filename = 'submit_code' + '.' + ext
-    hostfile = '/'+filename
+    #filename = 'submit_code' + '.' + ext
+    #hostfile = '/'+filename
 
-    file = open(_.HOST_PATH + hostfile, 'w+')
+    file = open('submit_code.cpp', 'w+')
     file.write(submission.code)
     file.close()
 
@@ -50,8 +51,8 @@ def __chief_judge(submission, testcases, ext, clear, run, cont_name, docker_imag
                                             tty=True,
                                             name=cont_name)
 
-    __copy_to_container(filename, filename, container)
-
+    #__copy_to_container(filename, filename, container)
+    os.system("docker cp submit_code.cpp {}:/submit_code.cpp".format(container.short_id))
     maxtime = 0.0
     verdict = submission.verdict='Accepted'
     submission.save()
@@ -63,12 +64,14 @@ def __chief_judge(submission, testcases, ext, clear, run, cont_name, docker_imag
 
     if compile:
         cp = sp.run('docker exec ' + cont_name + ' ' + compile, shell=True)
-        cp.returncode
+        print(cp.returncode)
         print(cp.returncode)
         if cp.returncode != 0:
             submission.verdict = 'CE'
             submission.save()
             return #close()
+
+    print(1234)
     input=testcases.input
     output=testcases.output
     input=input.split(',')
