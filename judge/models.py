@@ -3,7 +3,6 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
-#asdf
 class problem(models.Model):
     name=models.TextField()
     statement = models.TextField()
