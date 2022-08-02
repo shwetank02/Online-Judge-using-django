@@ -23,18 +23,18 @@
 
         <td>{{ sub.curr_problem.id }}. {{  sub.curr_problem.name }}</td>
         <td>
-          {% if sub.verdict == 'Accepted' %}
-            <p style="color: rgb(0, 255, 0); margin: 0;">Accepted</p>
+          {% if sub.verdict == 'AC' %}
+            <p style="color: rgb(0, 255, 0); margin: 0;">AC</p>
           {% elif sub.verdict == 'Testing' %}
             <p style="color: grey; margin: 0;">Testing</p>
           {% else %}
             <p style="color: red; margin: 0;">
               {% if sub.verdict == 'WA' %}
-                Wrong Answer
+                WA
               {% elif sub.verdict == 'TLE' %}
-                Time Limit Exceeded
-              {% elif sub.verdict == 'Compilation Error' %}
-                Compilation Error
+                TLE
+              {% elif sub.verdict == 'CE' %}
+                CE
               {% else %}
                 {{sub.verdict}}
               {% endif %}
