@@ -6,9 +6,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from .our_forms import code_form, problem_form, testcase_form
 from .code_validation import check_code
-from .code_validation_docker import code_check
 
-use_docker=False
 
 def display_problems(request):
     context={
@@ -27,10 +25,7 @@ def problem_detail(request, prob_id):
             sub.submitter = request.user.username
             #sub.submitter = coder.objects.get(user = request.user)
             sub.save()
-            if(use_docker):
-                code_check(sub)
-            else:
-                check_code(sub)
+            check_code(sub)
         return redirect('past_submissions',prob_id)
     else:
         form=code_form()
