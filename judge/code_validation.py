@@ -26,8 +26,7 @@ def check_code(submission):
     try:
         subprocess.run(command, capture_output = True, check = True)
     except subprocess.CalledProcessError:
-        print("Compilation Error")
-        submission.verdict = "Compilation Error"
+        submission.verdict = "CE"
         submission.save()
         return
     submission.verdict='Compiled'
@@ -53,7 +52,7 @@ def check_code(submission):
 
         #Calculate the verdict and save it
         if(checker(output.stdout,testoutput)):
-            submission.verdict='Accepted'
+            submission.verdict='AC'
             submission.save()
         else:
             submission.verdict='WA'
