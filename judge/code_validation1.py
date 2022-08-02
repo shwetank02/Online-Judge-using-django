@@ -1,14 +1,17 @@
+
 from .models import testcase
 import os, filecmp, sys, subprocess
+from online_judge.settings import BASE_DIR
 
 def check_code(submission):
-    with open("S:\study\online_judge\judge\Testcases\question1\sol.cpp", "w") as f:
+    #print(BASE_DIR)
+    with open("sol.cpp", "w") as f:
         f.write(submission.code)
     f.close()
     if sys.platform == 'linux':
         command =['g++ sol.cpp']
     else:
-        path_to_code = r"S:\study\online_judge\judge\Testcases\question1"
+        path_to_code = BASE_DIR
         command = 'g++ ' + os.path.join(path_to_code, 'sol.cpp')
 
     # Try code compilation
@@ -24,32 +27,20 @@ def check_code(submission):
     else:
         command = ['a.exe']
 
-    z=testcase.objects.get(curr_problem=submission.curr_problem)
-    input=z.input
-    output=z.output
-    input=input.split(',')
-    output1=output.split(',')
-    n=len(input)
-    for i in range(n):
-        testinput=input[i]
-        testoutput=output1[i]
-        f = open(testinput, 'r')
-        f_content= f.read()
+    z=testcase.objects.filter(curr_problem=submission.curr_problem)
+    for test in z:
+        testinput=test.input
+        testoutput=test.output
         try:
             output = subprocess.run(command, capture_output = True, \
-                    text = True, input = f_content, check = True, timeout = 2)
+                    text = True, input = testinput, check = True, timeout = submission.curr_problem.time_limit)
         except subprocess.TimeoutExpired:
             submission.verdict = "TLE"
             submission.save()
             return
-        f.close()
-        out1="S:\study\online_judge\judge\Testcases\question1\output.txt"
-        with open(out1, "w") as f:
-            f.write(output.stdout)
-        f.close()
 
-         #Calculate the verdict and save it
-        if(filecmp.cmp(out1,testoutput,shallow=False)):
+        #Calculate the verdict and save it
+        if(checker(output.stdout,testoutput)):
             submission.verdict='Accepted'
             submission.save()
         else:
@@ -57,4 +48,15 @@ def check_code(submission):
             submission.save()
             return
 
+
+def checker(output, correct_ouput):
+    output = output.split('\n')
+    correct_ouput = correct_ouput.split('\n')
+    if len(output) != len(correct_ouput):
+        return False
+    for i in range(len(output)):
+        if list(filter(None, output[i].split(' '))) != \
+                list(filter(None, correct_ouput[i].split(' '))):
+            return False
+    return True
 
