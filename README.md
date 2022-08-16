@@ -1,5 +1,5 @@
 # Online-Judge-using-django
-Code submission and evaluation plaform using docker for execution and security. It's a court for code, constituting judges of different languages, conducting sessions in their own container.
+Code submission and evaluation plaform that remotely, securely runs the user code and judges if the given code is correct/wrong/inefficient. Uses Docker for isolation to provide security and scalability.
 
 # Getting Started
 
